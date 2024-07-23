@@ -114,6 +114,7 @@ data_processed = preprocessor.fit_transform(data)
 ```python
 X = data.drop('RainTomorrow', axis=1)
 y = data['RainTomorrow']
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 ```
 # Proses Features Dataset
