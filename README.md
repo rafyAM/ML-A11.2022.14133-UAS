@@ -217,5 +217,6 @@ Model ini menunjukkan performa sempurna, yang mungkin mengindikasikan overfittin
     Interpretasi:
    ```
     Seperti model klasifikasi awan, model ini juga menunjukkan performa sempurna.
+
+![App Screenshot](./image/ConfusionMatrixKlasifikasiCuaca.png)
    
-images/ConfusionMatrixKlasifikasiCuaca.png
