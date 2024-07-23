@@ -138,12 +138,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 4. Pembagian Data
 - Data dibagi menjadi fitur (X) dan variabel target (y):
   ```python
-features = data.drop('RainTomorrow', axis=1)
-labels = data['RainTomorrow']
+  features = data.drop('RainTomorrow', axis=1)
+  labels = data['RainTomorrow']
   ```
 - Pembagian data latih uji dilakukan:
   ```python
-x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
+  x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
   ```
 5. Column Transformer:
 - ColumnTransformer dibuat untuk menerapkan preprocessing yang sesuai pada kolom numerik dan kategorikal:
