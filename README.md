@@ -122,68 +122,132 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 - Feature Engineering: Ekstraksi informasi tambahan dari fitur yang ada untuk meningkatkan kualitas prediksi.
 
 # Proses Learning / Modeling
-1. Persiapan Data:
-- Data dimuat dari file CSV: data = pd.read_csv("weatherAUS.csv")
-- Nilai yang hilang ditangani menggunakan fungsi kustom impute_missing()
-- Outlier ditangani menggunakan metode IQR dengan handle_outlires_IQR()
-- Fitur tambahan dibuat: 'Day', 'Month', 'Year' dari kolom 'Date'
-2. Rekayasa Fitur:
-- Klasifikasi baru ditambahkan: 'CloudClassification', 'TempClassification', 'FogClassification'
-3. Pembuatan Pipeline:
-- Pipeline terpisah dibuat untuk fitur numerik dan kategorikal:
-  ```python
-  num_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='mean')), ('scale', StandardScaler())])
-  cat_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='most_frequent')), ('encoder', OrdinalEncoder())])
-  ```
-4. Pembagian Data
-- Data dibagi menjadi fitur (X) dan variabel target (y):
-  ```python
-  features = data.drop('RainTomorrow', axis=1)
-  labels = data['RainTomorrow']
-  ```
-- Pembagian data latih uji dilakukan:
-  ```python
-  x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
-  ```
-5. Column Transformer:
-- ColumnTransformer dibuat untuk menerapkan preprocessing yang sesuai pada kolom numerik dan kategorikal:
-  ```python
-col_transformer = ColumnTransformer(
-    transformers=[
+
+1. Persiapan Data
+   - memisahakn fitur X dan target Y
+     ```python
+     features = data.drop('RainTomorrow', axis=1)
+     labels = data['RainTomorrow']
+     ```
+   - Membagi data menjadi set train dan test
+     ```python
+     from sklearn.model_selection import train_test_split
+     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
+     ```
+2. Preprocessing Pipeline
+   - Membuat pipeline untuk fitur numerik dan kategorikal
+     ```pyhton
+     num_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='mean')),('scale', StandardScaler())])
+
+     cat_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='most_frequent')),('encoder', OrdinalEncoder())])
+     ```
+   - Menggabungkan pipline menggunakn ColumnTransformer
+     ```python
+     col_transformer = ColumnTransformer(
+     transformers=[
         ('num_pipeline', num_pipeline, num_col),
         ('cat_pipeline', cat_pipeline, cat_col)
-    ],
-    remainder='passthrough',
-    n_jobs=-1
-)
-  ```
-6. Pemilihan Model:
-- Random Forest Classifier dipilih sebagai model utama:
-  ```python
-rf = RandomForestClassifier(random_state=42)
-  ```
-7. Pipeline Akhir:
-- Column transformer dan model random forest digabungkan menjadi pipeline akhir:
-  ```python
-    pipefinal = make_pipeline(col_transformer, rf)
-  ```
-8. Pelatihan model
-- Pipeline akhir dilatih dengan data latih:
-    ```python
-    pipefinal.fit(x_train, y_train)
-    ```
-9. Evaluasi Model
-- Prediksi dilakukan pada set uji:
-  ```python
-  pred = pipefinal.predict(x_test)
-  ```
-- Berbagai metrik dihitung: Skor Akurasi, Laporan Klasifikasi (Presisi, Recall, F1-score), Matriks Konfusi, Kurva ROC dan AUC diplot
-  
-10. Model Tambahan
-    - Model Random Forest terpisah dilatih untuk klasifikasi Awan, Suhu, dan Kabut
-      
-12. Pengujian Model
-    - Model yang telah dilatih digunakan untuk membuat prediksi pada data baru yang belum pernah dilihat
+     ],
+     remainder='passthrough',
+     n_jobs=-1
+     )
+     ```
+3. Model Utama Random Forest Classifier
+   - Inisialisai model
+     ```python
+     rf = RandomModelClassifier( random_state=42)
+     ```
+
+   - Membuat pipeline final yang menggabungkan preprocessing dan model
+     ```python
+     rf = RandomForestClassifier(random_state=42)
+     ```
+4. Pelatihan Model
+   - Melatih model menggunakan data pelatihan
+     ```python
+     pipefinal.fit(X_train, y_train)
+     ```
+5. Prediksi
+   - Membuat prediksi menggunakan data pengujian
+     ```python
+     pred = pipefinal.predict(X_test)
+     ```
+6. Evalusi Model
+   - Menghitung matrix evaluasi
+     ```python
+     from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+     print('Accuracy Score:', accuracy_score(y_test, pred))
+     print('Classification Report:\n', classification_report(y_test, pred))
+     ```
+   - Melakukan Cross validation
+     ```python
+     from sklearn.model_selection import cross_val_predict
+
+     y_pred = cross_val_predict(pipefinal, X_train, y_train, cv=3)
+     cm = confusion_matrix(y_train, y_pred)
+     print('Confusion Matrix:\n', cm)
+     ```
+7. Visualisasi ROC Curve
+   ```python
+   from sklearn.metrics import roc_curve, auc
+    import matplotlib.pyplot as plt
+    
+    y_prob = pipefinal.predict_proba(X_test)[:, 1]
+    fpr, tpr, thresholds = roc_curve(y_test, y_prob, pos_label='Yes')
+    roc_auc = auc(fpr, tpr)
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC)')
+    plt.legend(loc="lower right")
+    plt.show()
+   ```
+   ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/ReceiverOperatingCharacteristic(ROC).png?raw=true)
+
+8. Model tambahan untuk klasifikasi awan, suhu, dan kabut
+   - Membuat fungsi klasifikasi
+     ```python
+     def classify_cloud(row):
+        return 'Overcast' if row['Cloud9am'] >= 7 or row['Cloud3pm'] >= 7 else 'Cloudy' if row['Cloud9am'] >= 4 or row['Cloud3pm'] >= 4      else 'Sunny'
+     
+     def classify_temperature(row):
+            avg_temp = (row['MinTemp'] + row['MaxTemp']) / 2
+            return 'Hot' if avg_temp >= 30 else 'Warm' if avg_temp >= 20 else 'Cool' if avg_temp >= 10 else 'Cold'
+        
+     def classify_fog(row):
+            return 'Foggy' if row['Humidity9am'] >= 90 or row['Humidity3pm'] >= 90 else 'Not Foggy'
+     ```
+   - Menerapkan klasifikasi ke dataset
+     ```python
+     data['CloudClassification'] = data.apply(classify_cloud, axis=1)
+     data['TempClassification'] = data.apply(classify_temperature, axis=1)
+     data['FogClassification'] = data.apply(classify_fog, axis=1)
+     ```
+   - Melatih model untuk setiap klasifikasi
+     ```pyhton
+     features = ['Cloud9am', 'Cloud3pm', 'MinTemp', 'MaxTemp', 'Humidity9am', 'Humidity3pm']
+     X = data[features]
+
+     for classification in ['CloudClassification', 'TempClassification', 'FogClassification']:
+     y = data[classification]
+     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+     f_model = RandomForestClassifier(random_state=42)
+     rf_model.fit(X_train, y_train)
+        
+     y_pred = rf_model.predict(X_test)
+        
+     print(f"\n{classification} Evaluation:")
+     print("Accuracy:", accuracy_score(y_test, y_pred))
+     print("Classification Report:\n", classification_report(y_test, y_pred))
+     ```
+       
 
 # Performa Model
 1. Prediksi Prediksi Hujan Esok Hari dengan akurasi = 0.8624(86.24%):
