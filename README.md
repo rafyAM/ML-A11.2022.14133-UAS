@@ -72,34 +72,34 @@ Fitur Kategorikal:
 # Exploratory Data Analysis (EDA)
 
 ## Memuat data
-``python
+```python
 data = pd.read_csv("weatherAUS.csv")
-``
+```
 ## Pemeriksaan awal
-``python
+```python
 print(data.head())
 print(data.describe())
-``
+```
 ## Mengatasi nilai yang hilang
-``python
+```python
 data.fillna(data.median(), inplace=True)
 data.fillna(data.mode().iloc[0], inplace=True)
-``
+```
 ## Menghapus duplikat
-``python
+```python
 data.drop_duplicates(inplace=True)
-``
+```
 ## Visualisasi distribusi dan hubungan
-``python
+```python
 plt.figure(figsize=(10, 6))
 sns.histplot(data['Rainfall'], kde=True)
 sns.pairplot(data[['MaxTemp', 'Rainfall', 'Humidity9am']])
 plt.figure(figsize=(10, 8))
 sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
-``
+```
 
 ## Encoding dan Skala
-``python
+```python
 numerical_features = data.select_dtypes(include=['int64', 'float64']).columns
 categorical_features = data.select_dtypes(include=['object']).columns
 preprocessor = ColumnTransformer(
@@ -108,14 +108,14 @@ preprocessor = ColumnTransformer(
         ('cat', OneHotEncoder(), categorical_features)
     ])
 data_processed = preprocessor.fit_transform(data)
-``
+```
 
 ## Pembagian data
-``python
+```python
 X = data.drop('RainTomorrow', axis=1)
 y = data['RainTomorrow']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-``
+```
 # Proses Features Dataset
 - feature Selection: Memilih fitur yang relevan untuk model termasuk Date, Location, MinTemp, MaxTemp, Rainfall, Evaporation, Sunshine, WindGustDir, WindGustSpeed, WindDir9am, WindDir3pm, WindSpeed9am, WindSpeed3pm, Humidity9am, Humidity3pm, Pressure9am, Pressure3pm, Cloud9am, Cloud3pm, Temp9am, Temp3pm, RainToday, RainTomorrow. Fitur tambahan seperti Day, Month, dan year
 - Feature Engineering: Ekstraksi informasi tambahan dari fitur yang ada untuk meningkatkan kualitas prediksi.
@@ -130,23 +130,23 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 - Klasifikasi baru ditambahkan: 'CloudClassification', 'TempClassification', 'FogClassification'
 3. Pembuatan Pipeline:
 - Pipeline terpisah dibuat untuk fitur numerik dan kategorikal:
-  ``python
+  ```python
   num_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='mean')), ('scale', StandardScaler())])
   cat_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='most_frequent')), ('encoder', OrdinalEncoder())])
-  ``
+  ```
 4. Pembagian Data
 - Data dibagi menjadi fitur (X) dan variabel target (y):
-  ``python
+  ```python
 features = data.drop('RainTomorrow', axis=1)
 labels = data['RainTomorrow']
-  ``
+  ```
 - Pembagian data latih uji dilakukan:
-  ``python
+  ```python
 x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
-  ``
+  ```
 5. Column Transformer:
 - ColumnTransformer dibuat untuk menerapkan preprocessing yang sesuai pada kolom numerik dan kategorikal:
-  ``python
+  ```python
 col_transformer = ColumnTransformer(
     transformers=[
         ('num_pipeline', num_pipeline, num_col),
@@ -155,22 +155,22 @@ col_transformer = ColumnTransformer(
     remainder='passthrough',
     n_jobs=-1
 )
-  ``
+  ```
 6. Pemilihan Model:
 - Random Forest Classifier dipilih sebagai model utama:
-  ``python
+  ```python
 rf = RandomForestClassifier(random_state=42)
-  ``
+  ```
 7. Pipeline Akhir:
 - Column transformer dan model random forest digabungkan menjadi pipeline akhir:
-  ``python
-pipefinal = make_pipeline(col_transformer, rf)
-  ``
+  ```python
+    pipefinal = make_pipeline(col_transformer, rf)
+  ```
 8. Pelatihan model
 - Pipeline akhir dilatih dengan data latih:
-    ``
-pipefinal.fit(x_train, y_train)
-    ``
+    ```python
+    pipefinal.fit(x_train, y_train)
+    ```
 9. Evaluasi Model
 - Prediksi dilakukan pada set uji:
   ```python
