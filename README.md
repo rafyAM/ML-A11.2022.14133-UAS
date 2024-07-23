@@ -13,24 +13,16 @@ Proyek ini berfokus pada memprediksi apakah akan terjadi hujan di berbagai lokas
 - Mengklasifikasikan kondisi cuaca seperti keberadaan awan, suhu, dan kabut untuk memberikan informasi lebih lanjut yang bisa berguna dalam berbagai aplikasi seperti pertanian dan lain lain
 
 # Alur Penyelesaian
-```mermaid
-graph TD;
-    A[Data Mentah] --> B[Preprocessing & EDA]
-    B --> C[Feature Engineering]
-    C --> D[Split Data (Train/Test)]
-    D --> E[Model Training]
-    E --> F[Random Forest Classifier]
-    F --> G[Model Evaluation]
-    G --> H[Prediksi Hujan]
-    G --> I[Klasifikasi Awan]
-    G --> J[Klasifikasi Suhu]
-    G --> K[Deteksi Kabut]
-    H --> L[Analisis Performa]
-    I --> L
-    J --> L
-    K --> L
-    L --> M[Penyempurnaan Model]
-    M --> N[Implementasi]
+```
+[Data Mentah] → [Preprocessing & EDA] → [Feature Engineering]
+       ↓
+[Split Data (Train/Test)] → [Model Training]
+       ↓
+[Random Forest Classifier] → [Model Evaluation]
+       ↓
+[Prediksi Hujan] [Klasifikasi Awan] [Klasifikasi Suhu] [Deteksi Kabut]
+       ↓
+[Analisis Performa] → [Penyempurnaan Model] → [Implementasi]
 ```
 
 ## Penjelasan Dataset
