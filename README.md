@@ -152,9 +152,9 @@ pipefinal.fit(x_train, y_train)
     ``
 9. Evaluasi Model
 - Prediksi dilakukan pada set uji:
-  ``python
-pred = pipefinal.predict(x_test)
-  ``
+  ```python
+  pred = pipefinal.predict(x_test)
+  ```
 - Berbagai metrik dihitung: Skor Akurasi, Laporan Klasifikasi (Presisi, Recall, F1-score), Matriks Konfusi, Kurva ROC dan AUC diplot
   
 10. Model Tambahan
@@ -163,6 +163,11 @@ pred = pipefinal.predict(x_test)
 12. Pengujian Model
     - Model yang telah dilatih digunakan untuk membuat prediksi pada data baru yang belum pernah dilihat
 
+# Performa Model
+1. Prediksi Prediksi Hujan Esok Hari dengan akurasi = 0.8624(86.24%):
+   ```python
+   pred=pipefinal.predict(x_test)
+   print('Accuracy Score :', accuracy_score(y_test, pred) , '\n')
+   print('Classification Report :', '\n',classification_report(y_test, pred))
 
-
-
+   ```
