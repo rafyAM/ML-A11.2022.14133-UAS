@@ -171,3 +171,16 @@ pipefinal.fit(x_train, y_train)
    print('Classification Report :', '\n',classification_report(y_test, pred))
 
    ```
+   Accuracy Score : 0.8624437781109445 
+
+Classification Report : 
+               precision    recall  f1-score   support
+
+          No       0.88      0.96      0.92     18909
+         Yes       0.77      0.51      0.61      5103
+
+    accuracy                           0.86     24012
+   macro avg       0.82      0.73      0.76     24012
+weighted avg       0.85      0.86      0.85     24012
+
+   
