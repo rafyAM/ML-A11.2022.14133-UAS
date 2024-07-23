@@ -218,4 +218,4 @@ Model ini menunjukkan performa sempurna, yang mungkin mengindikasikan overfittin
    ```
     Seperti model klasifikasi awan, model ini juga menunjukkan performa sempurna.
    
-   /images/ConfusionMatrixKlasifikasiCuaca.png
+images/ConfusionMatrixKlasifikasiCuaca.png
