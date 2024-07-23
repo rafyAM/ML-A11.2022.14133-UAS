@@ -24,7 +24,6 @@ Proyek ini berfokus pada memprediksi apakah akan terjadi hujan di berbagai lokas
 Dataset = weatherAUS.csv
 Dataset yang digunakan berisi data cuaca harian dari berbagai lokasi di Australia
 Fitur Numerik:
-
     MinTemp: Suhu minimum pada hari itu di derajat Celsius.
     MaxTemp: Suhu maksimum pada hari itu di derajat Celsius.
     Rainfall: Jumlah curah hujan yang tercatat pada hari itu dalam mm.
@@ -43,7 +42,6 @@ Fitur Numerik:
     Temp3pm: Suhu pada pukul 3 sore di derajat Celsius.
 
 Fitur Kategorikal:
-
     Location: Lokasi pengamatan cuaca.
     WindGustDir: Arah angin terkencang selama hari itu.
     WindDir9am: Arah angin pada pukul 9 pagi.
@@ -51,3 +49,49 @@ Fitur Kategorikal:
     RainToday: Indikator apakah hujan turun atau tidak pada hari itu ("Yes" atau "No").
 
 # Exploratory Data Analysis (EDA)
+
+## Memuat data
+``
+data = pd.read_csv("weatherAUS.csv")
+``
+## Pemeriksaan awal
+``
+print(data.head())
+print(data.describe())
+``
+## Mengatasi nilai yang hilang
+``
+data.fillna(data.median(), inplace=True)
+data.fillna(data.mode().iloc[0], inplace=True)
+``
+## Menghapus duplikat
+``
+data.drop_duplicates(inplace=True)
+``
+## Visualisasi distribusi dan hubungan
+``
+plt.figure(figsize=(10, 6))
+sns.histplot(data['Rainfall'], kde=True)
+sns.pairplot(data[['MaxTemp', 'Rainfall', 'Humidity9am']])
+plt.figure(figsize=(10, 8))
+sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
+``
+
+## Encoding dan Skala
+``
+numerical_features = data.select_dtypes(include=['int64', 'float64']).columns
+categorical_features = data.select_dtypes(include=['object']).columns
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numerical_features),
+        ('cat', OneHotEncoder(), categorical_features)
+    ])
+data_processed = preprocessor.fit_transform(data)
+``
+
+## Pembagian data
+``
+X = data.drop('RainTomorrow', axis=1)
+y = data['RainTomorrow']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+``
