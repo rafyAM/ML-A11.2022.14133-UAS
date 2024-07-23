@@ -51,25 +51,25 @@ Fitur Kategorikal:
 # Exploratory Data Analysis (EDA)
 
 ## Memuat data
-``
+``python
 data = pd.read_csv("weatherAUS.csv")
 ``
 ## Pemeriksaan awal
-``
+``python
 print(data.head())
 print(data.describe())
 ``
 ## Mengatasi nilai yang hilang
-``
+``python
 data.fillna(data.median(), inplace=True)
 data.fillna(data.mode().iloc[0], inplace=True)
 ``
 ## Menghapus duplikat
-``
+``python
 data.drop_duplicates(inplace=True)
 ``
 ## Visualisasi distribusi dan hubungan
-``
+``python
 plt.figure(figsize=(10, 6))
 sns.histplot(data['Rainfall'], kde=True)
 sns.pairplot(data[['MaxTemp', 'Rainfall', 'Humidity9am']])
@@ -78,7 +78,7 @@ sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
 ``
 
 ## Encoding dan Skala
-``
+``python
 numerical_features = data.select_dtypes(include=['int64', 'float64']).columns
 categorical_features = data.select_dtypes(include=['object']).columns
 preprocessor = ColumnTransformer(
@@ -90,7 +90,7 @@ data_processed = preprocessor.fit_transform(data)
 ``
 
 ## Pembagian data
-``
+``python
 X = data.drop('RainTomorrow', axis=1)
 y = data['RainTomorrow']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -98,3 +98,75 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # Proses Features Dataset
 - feature Selection: Memilih fitur yang relevan untuk model termasuk Date, Location, MinTemp, MaxTemp, Rainfall, Evaporation, Sunshine, WindGustDir, WindGustSpeed, WindDir9am, WindDir3pm, WindSpeed9am, WindSpeed3pm, Humidity9am, Humidity3pm, Pressure9am, Pressure3pm, Cloud9am, Cloud3pm, Temp9am, Temp3pm, RainToday, RainTomorrow. Fitur tambahan seperti Day, Month, dan year
 - Feature Engineering: Ekstraksi informasi tambahan dari fitur yang ada untuk meningkatkan kualitas prediksi.
+
+# Proses Learning / Modeling
+1. Persiapan Data:
+- Data dimuat dari file CSV: data = pd.read_csv("weatherAUS.csv")
+- Nilai yang hilang ditangani menggunakan fungsi kustom impute_missing()
+- Outlier ditangani menggunakan metode IQR dengan handle_outlires_IQR()
+- Fitur tambahan dibuat: 'Day', 'Month', 'Year' dari kolom 'Date'
+2. Rekayasa Fitur:
+- Klasifikasi baru ditambahkan: 'CloudClassification', 'TempClassification', 'FogClassification'
+3. Pembuatan Pipeline:
+- Pipeline terpisah dibuat untuk fitur numerik dan kategorikal:
+  ``python
+  num_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='mean')), ('scale', StandardScaler())])
+  cat_pipeline = Pipeline(steps=[('impute', SimpleImputer(strategy='most_frequent')), ('encoder', OrdinalEncoder())])
+  ``
+4. Pembagian Data
+- Data dibagi menjadi fitur (X) dan variabel target (y):
+  ``python
+features = data.drop('RainTomorrow', axis=1)
+labels = data['RainTomorrow']
+  ``
+- Pembagian data latih uji dilakukan:
+  ``python
+x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
+  ``
+5. Column Transformer:
+- ColumnTransformer dibuat untuk menerapkan preprocessing yang sesuai pada kolom numerik dan kategorikal:
+  ``python
+col_transformer = ColumnTransformer(
+    transformers=[
+        ('num_pipeline', num_pipeline, num_col),
+        ('cat_pipeline', cat_pipeline, cat_col)
+    ],
+    remainder='passthrough',
+    n_jobs=-1
+)
+  ``
+6. Pemilihan Model:
+- Random Forest Classifier dipilih sebagai model utama:
+  ``python
+rf = RandomForestClassifier(random_state=42)
+  ``
+7. Pipeline Akhir:
+- Column transformer dan model random forest digabungkan menjadi pipeline akhir:
+  ``python
+pipefinal = make_pipeline(col_transformer, rf)
+  ``
+8. Pelatihan model
+- Pipeline akhir dilatih dengan data latih:
+    ``
+pipefinal.fit(x_train, y_train)
+    ``
+9. Evaluasi Model
+- Prediksi dilakukan pada set uji:
+  ``python
+pred = pipefinal.predict(x_test)
+  ``
+- Berbagai metrik dihitung:
+-     Skor Akurasi
+-     Laporan Klasifikasi (Presisi, Recall, F1-score)
+-     Matriks Konfusi
+-     Kurva ROC dan AUC diplot
+  
+10. Model Tambahan
+    - Model Random Forest terpisah dilatih untuk klasifikasi Awan, Suhu, dan Kabut
+      
+12. Pengujian Model
+    - Model yang telah dilatih digunakan untuk membuat prediksi pada data baru yang belum pernah dilihat
+
+
+
+
