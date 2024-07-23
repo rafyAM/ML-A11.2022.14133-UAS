@@ -95,3 +95,6 @@ X = data.drop('RainTomorrow', axis=1)
 y = data['RainTomorrow']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 ``
+# Proses Features Dataset
+- feature Selection: Memilih fitur yang relevan untuk model termasuk Date, Location, MinTemp, MaxTemp, Rainfall, Evaporation, Sunshine, WindGustDir, WindGustSpeed, WindDir9am, WindDir3pm, WindSpeed9am, WindSpeed3pm, Humidity9am, Humidity3pm, Pressure9am, Pressure3pm, Cloud9am, Cloud3pm, Temp9am, Temp3pm, RainToday, RainTomorrow. Fitur tambahan seperti Day, Month, dan year
+- Feature Engineering: Ekstraksi informasi tambahan dari fitur yang ada untuk meningkatkan kualitas prediksi.
