@@ -182,5 +182,36 @@ pipefinal.fit(x_train, y_train)
         accuracy                           0.86     24012
        macro avg       0.82      0.73      0.76     24012
     weighted avg       0.85      0.86      0.85     24012
+- Model memiliki akurasi keseluruhan yang baik (86.24%).
+- Performa lebih baik dalam memprediksi "Tidak Hujan" (No) dibandingkan "Hujan" (Yes).
+- Recall untuk kelas "Yes" relatif rendah (0.51), menunjukkan model kurang baik dalam mendeteksi kejadian hujan yang sebenarnya.
+  
+2.  Model Klasifikasi Awan:
+    Akurasi: 1.0 (100%)
+    Presisi: 1.0
+    Recall: 1.0
+    F1 Score: 1.0
+    Interpretasi:
 
+    Model ini menunjukkan performa sempurna, yang mungkin mengindikasikan overfitting atau fitur yang terlalu prediktif.
+
+
+3. Model Klasifikasi Suhu:
+    Akurasi: 0.9952 (99.52%)
+    Presisi: 0.9952
+    Recall: 0.9952
+    F1 Score: 0.9952
+    Interpretasi:
+    
+    Model ini juga menunjukkan performa yang sangat tinggi, hampir sempurna.
+
+
+4. Model Klasifikasi Kabut:
+    Akurasi: 1.0 (100%)
+    Presisi: 1.0
+    Recall: 1.0
+    F1 Score: 1.0
+    Interpretasi:
+    
+    Seperti model klasifikasi awan, model ini juga menunjukkan performa sempurna.
    
