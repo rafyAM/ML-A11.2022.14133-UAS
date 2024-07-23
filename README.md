@@ -186,6 +186,10 @@ pipefinal.fit(x_train, y_train)
 - Performa lebih baik dalam memprediksi "Tidak Hujan" (No) dibandingkan "Hujan" (Yes).
 - Recall untuk kelas "Yes" relatif rendah (0.51), menunjukkan model kurang baik dalam mendeteksi kejadian hujan yang sebenarnya.
   
+- Receiver Operating Characteristic (ROC)
+  ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/ReceiverOperatingCharacteristic(ROC).png?raw=true)
+
+
 2.  Model Klasifikasi Awan:
    ```
     Akurasi: 1.0 (100%)
