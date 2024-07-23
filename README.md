@@ -223,4 +223,11 @@ Model ini menunjukkan performa sempurna, yang mungkin mengindikasikan overfittin
     Seperti model klasifikasi awan, model ini juga menunjukkan performa sempurna.
 
 ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/ConfusionMatrixKlasifikasiCuaca.png?raw=true)
-   
+
+# Diskusi Hasil dan Kesimpulan
+
+## hasil :
+Analisis dan pemodelan cuaca menggunakan Random Forest menghasilkan model dengan akurasi 86.24% dalam memprediksi kemungkinan hujan esok hari. Preprocessing data melibatkan penanganan nilai yang hilang dan outlier, serta pembuatan fitur tambahan seperti klasifikasi awan, suhu, dan kabut. Model menunjukkan performa lebih baik dalam memprediksi hari tanpa hujan dibandingkan hari hujan, yang mungkin disebabkan oleh ketidakseimbangan kelas dalam dataset. Kurva ROC menunjukkan performa klasifikasi yang baik dengan AUC tinggi. Klasifikasi tambahan menunjukkan akurasi sangat tinggi, namun perlu diwaspadai kemungkinan overfitting. Pengujian model dengan data baru menunjukkan kemampuan mempertimbangkan variasi geografis dan kondisi cuaca.
+
+## Kesimpulan :
+Model Random Forest yang dikembangkan menunjukkan performa yang baik dalam memprediksi cuaca, namun masih ada ruang untuk peningkatan, terutama dalam menyeimbangkan prediksi antara kelas hujan dan tidak hujan. Model ini dapat menjadi alat berguna untuk prediksi cuaca jangka pendek, tetapi sebaiknya digunakan bersama metode prediksi cuaca lainnya untuk hasil yang lebih akurat dan komprehensif. Pengembangan lebih lanjut dapat melibatkan feature engineering, teknik balancing dataset, validasi silang yang lebih ekstensif, dan integrasi data time series untuk memperhitungkan pola cuaca jangka panjang. Meskipun model menunjukkan akurasi tinggi, perlu kehati-hatian terhadap kemungkinan overfitting, terutama pada klasifikasi tambahan yang menunjukkan akurasi mendekati sempurna.
