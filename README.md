@@ -1,24 +1,27 @@
 # Prediksi Cuaca di Australia Menggunakan Machine Learning
 ## Rafy Attala Mohamad - A11.2022.14133
 
-## Ringkasan
+# Ringkasan
 Proyek ini berfokus pada memprediksi apakah akan terjadi hujan di berbagai lokasi di Australia pada hari berikutnya berdasarkan data historis cuaca. Data yang digunakan mencakup berbagai parameter meteorologi yang diukur setiap hari.
 
-## Permasalahan
+# Permasalahan
 - Dataset mengandung banyak nilai yang hilang dan beberapa outlier yang dapat mempengaruhi keakuratan prediksi.
 - Variabilitas cuaca yang tinggi dan keunikan kondisi lokal mempersulit model untuk membuat prediksi yang akurat secara konsisten.
 
-## Tujuan yang akan dicapai
+# Tujuan yang akan dicapai
 - Memprediksi kemungkinan hujan pada hari berikutnya dengan akurasi yang tinggi untuk membantu dalam perencanaan aktivitas dan manajemen sumber daya.
 - Mengklasifikasikan kondisi cuaca seperti keberadaan awan, suhu, dan kabut untuk memberikan informasi lebih lanjut yang bisa berguna dalam berbagai aplikasi seperti pertanian dan lain lain
 
-## Model/Alur Peneyelesaian
-- Pengolahan Data Awal: Pembersihan dan penyiapan data melalui pengisian nilai yang hilang dan penghapusan outlier.
-- Pengembangan Fitur: Mengubah tanggal ke dalam format numerik dan mengategorikan variabel berdasarkan parameter cuaca.
-- Pembangunan dan Pelatihan Model: Menggunakan RandomForestClassifier karena robust terhadap overfitting dan efektif dalam mengelola fitur kategorikal dan numerik.
-- Validasi Model: Penerapan cross-validation untuk menilai kestabilan dan reliabilitas model.
-- Testing: Melakukan pengujian model dengan data yang belum pernah dilihat sebelumnya untuk mengevaluasi performa nyata model dalam kondisi operasional.
-- Evaluasi Model: Penggunaan metrik seperti akurasi, precision, recall, F1-score, dan ROC-AUC untuk evaluasi komprehensif.
+# Alur Penyelesaian
+[Data Mentah] → [Preprocessing & EDA] → [Feature Engineering]
+       ↓
+[Split Data (Train/Test)] → [Model Training]
+       ↓
+[Random Forest Classifier] → [Model Evaluation]
+       ↓
+[Prediksi Hujan] [Klasifikasi Awan] [Klasifikasi Suhu] [Deteksi Kabut]
+       ↓
+[Analisis Performa] → [Penyempurnaan Model] → [Implementasi]
 
 ## Penjelasan Dataset
 Dataset = weatherAUS.csv
@@ -118,8 +121,12 @@ y = data['RainTomorrow']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 ```
 # Proses Features Dataset
-- feature Selection: Memilih fitur yang relevan untuk model termasuk Date, Location, MinTemp, MaxTemp, Rainfall, Evaporation, Sunshine, WindGustDir, WindGustSpeed, WindDir9am, WindDir3pm, WindSpeed9am, WindSpeed3pm, Humidity9am, Humidity3pm, Pressure9am, Pressure3pm, Cloud9am, Cloud3pm, Temp9am, Temp3pm, RainToday, RainTomorrow. Fitur tambahan seperti Day, Month, dan year
-- Feature Engineering: Ekstraksi informasi tambahan dari fitur yang ada untuk meningkatkan kualitas prediksi.
+1. Penangan Missing Values dengan imputasi berdasarkan lokasi
+2. extract fitur tanggal
+3. Penanganan Outlier menggunakan metode IQR
+4. Feature Engineering dengan menambahkan klasifikasi untuk awan, suhu, dan kabut
+5. Pemisahan fitur dan target
+6. Pembuatan pipeline preprocessing yang berbeda untuk fitur numerik dan kategorikal
 
 # Proses Learning / Modeling
 
