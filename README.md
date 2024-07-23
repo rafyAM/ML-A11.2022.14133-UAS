@@ -218,5 +218,5 @@ Model ini menunjukkan performa sempurna, yang mungkin mengindikasikan overfittin
    ```
     Seperti model klasifikasi awan, model ini juga menunjukkan performa sempurna.
 
-![App Screenshot](./image/ConfusionMatrixKlasifikasiCuaca.png)
+https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/ConfusionMatrixKlasifikasiCuaca.png?raw=true
    
