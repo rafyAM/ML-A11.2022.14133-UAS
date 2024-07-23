@@ -180,6 +180,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
      print('Accuracy Score:', accuracy_score(y_test, pred))
      print('Classification Report:\n', classification_report(y_test, pred))
      ```
+   Accuracy Score : 0.8624437781109445 
+
+Classification Report : 
+               precision    recall  f1-score   support
+
+          No       0.88      0.96      0.92     18909
+         Yes       0.77      0.51      0.61      5103
+
+    accuracy                           0.86     24012
+   macro avg       0.82      0.73      0.76     24012
+weighted avg       0.85      0.86      0.85     24012
+     
    - Melakukan Cross validation
      ```python
      from sklearn.model_selection import cross_val_predict
@@ -188,6 +200,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
      cm = confusion_matrix(y_train, y_pred)
      print('Confusion Matrix:\n', cm)
      ```
+    array([[42116,  1890],
+       [ 5987,  6035]])
+     
 7. Visualisasi ROC Curve
    ```python
    from sklearn.metrics import roc_curve, auc
