@@ -156,10 +156,10 @@ pipefinal.fit(x_train, y_train)
 pred = pipefinal.predict(x_test)
   ``
 - Berbagai metrik dihitung:
--     Skor Akurasi
--     Laporan Klasifikasi (Presisi, Recall, F1-score)
--     Matriks Konfusi
--     Kurva ROC dan AUC diplot
+-- Skor Akurasi
+-- Laporan Klasifikasi (Presisi, Recall, F1-score)
+-- Matriks Konfusi
+-- Kurva ROC dan AUC diplot
   
 10. Model Tambahan
     - Model Random Forest terpisah dilatih untuk klasifikasi Awan, Suhu, dan Kabut
