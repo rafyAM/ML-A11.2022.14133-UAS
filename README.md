@@ -26,9 +26,9 @@ graph TD;
     G --> J[Klasifikasi Suhu]
     G --> K[Deteksi Kabut]
     H --> L[Analisis Performa]
-    I --> L
-    J --> L
-    K --> L
+    I --> L[Analisis Performa]
+    J --> L[Analisis Performa]
+    K --> L[Analisis Performa]
     L --> M[Penyempurnaan Model]
     M --> N[Implementasi]
 ```
