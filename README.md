@@ -262,7 +262,7 @@ weighted avg       0.85      0.86      0.85     24012
      print("Accuracy:", accuracy_score(y_test, y_pred))
      print("Classification Report:\n", classification_report(y_test, y_pred))
      ```
-       
+     ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisCuacaBerdasarkanAwan,Suhu,danKabut.png?raw=true)
 
 # Performa Model
 1. Prediksi Prediksi Hujan Esok Hari dengan akurasi = 0.8624(86.24%):
