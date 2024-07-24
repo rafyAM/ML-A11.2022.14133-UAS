@@ -124,12 +124,182 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 ```
 # Proses Features Dataset
 1. Penangan Missing Values dengan imputasi berdasarkan lokasi
-2. extract fitur tanggal
-3. Penanganan Outlier menggunakan metode IQR
-4. Feature Engineering dengan menambahkan klasifikasi untuk awan, suhu, dan kabut
-5. Pemisahan fitur dan target
-6. Pembuatan pipeline preprocessing yang berbeda untuk fitur numerik dan kategorikal
+   - Membuat fungsi untuk imputasi berdasarkan lokasi
+     ```python
+     def impute_missing(data):
+     loc_unique = data['Location'].unique()
+     num_col = data.select_dtypes(exclude='object').columns
+     cat_col = data.select_dtypes(include='object').columns
 
+           for col in num_col:
+               for loc in loc_unique:
+                   filt = data['Location'].isin([loc])
+                   med = data[filt][col].median()
+                   data.loc[filt, col] = data[filt][col].fillna(med)
+           
+           for col in cat_col:
+               for loc in loc_unique:
+                   filt = data['Location'].isin([loc])
+                   if data[filt][col].empty:
+                       continue
+                   mode = data[filt][col].mode()
+                   if not mode.empty:
+                       med = mode[0]
+                       data.loc[filt, col] = data[filt][col].fillna(med)
+           
+           return data
+     data=impute_missing(data)
+
+     remaining_nulls=data.isnull().sum().sort_values(ascending=False)
+
+     plt.figure(figsize=(15,6))
+     sns.barplot(x=remaining_nulls.index,y=remaining_nulls.values,color=c)
+     plt.xticks(rotation=45)
+     plt.title('distribusi nilai null di setial kolom', fontsize=16)
+     plt.show()
+     ```
+     ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/DistribusiNialiNullDiSetiapKolom.png?raw=true)
+
+   - Menghapus baris yang masih memiliki nilai null pada kolom tertentu
+     ```python
+            data.dropna(subset=['WindGustDir', 'WindGustSpeed', 'WindDir9am', 'WindDir3pm', 'Pressure9am', 'Pressure3pm', 'RainToday', 'RainTomorrow', 'Evaporation', 'Sunshine', 'Cloud9am', 'Cloud3pm'], inplace=True, axis=0)
+     ```
+2. extract fitur tanggal
+   - Mengubah Kolom date menjadi tipe datetime dan mengekstrak komponen tanggal
+     ```python
+     data['Date'] = pd.to_datetime(data['Date'])
+     data['Day'] = data['Date'].dt.day
+     data['Month'] = data['Date'].dt.month
+     data['Year'] = data['Date'].dt.year
+     data.drop('Date', axis=1, inplace=True)
+     ```
+          
+3. Penanganan Outlier menggunakan metode IQR
+   -Menggunakan metode IQR untuk menangani outlier
+   ```python
+   def handle_outlires_IQR(data):
+    num_col = data.select_dtypes(exclude='object').columns
+    for col in num_col:
+        Q1 = data[col].quantile(0.25)
+        Q3 = data[col].quantile(0.75)
+        IQR = Q3 - Q1
+        TQR=1.5*IQR
+        outliers = data[ ( data[col] < (Q1 -IQR)) | (data[col] > (Q3 +IQR) ) ][col]
+        med_value=data[col].median()
+        data[data[col].isin([outliers])][col]=med_value
+    return data
+   
+   data=handle_outlires_IQR(data)
+   fig,ax=plt.subplots(5,3,figsize=(20,35))
+   idx=0
+   for i in range(5):
+    for j in range(3):
+        sns.kdeplot(ax=ax[i, j], x=data[num_col[idx]],color=c,alpha=0.4,fill=True)
+        ax[i, j].set_title(num_col[idx])
+        idx=idx+1
+   ```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/Distribusi%20Densitas%20Variabel%20Cuaca.png?raw=true)
+   
+4. Feature Engineering
+   -Menambahkan klasifikasi untuk awan, suhu, dan kabut
+   ```python
+   def classify_cloud(row):
+    if row['Cloud9am'] >= 7 or row['Cloud3pm'] >= 7:
+        return 'Overcast'
+    elif row['Cloud9am'] >= 4 or row['Cloud3pm'] >= 4:
+        return 'Cloudy'
+    else:
+        return 'Sunny'
+
+   def classify_temperature(row):
+    avg_temp = (row['MinTemp'] + row['MaxTemp']) / 2
+    if avg_temp >= 30:
+        return 'Hot'
+    elif avg_temp >= 20:
+        return 'Warm'
+    elif avg_temp >= 10:
+        return 'Cool'
+    else:
+        return 'Cold'
+
+   def classify_fog(row):
+    if row['Humidity9am'] >= 90 or row['Humidity3pm'] >= 90:
+        return 'Foggy'
+    else:
+        return 'Not Foggy'
+
+   data['CloudClassification'] = data.apply(classify_cloud, axis=1)
+   data['TempClassification'] = data.apply(classify_temperature, axis=1)
+   data['FogClassification'] = data.apply(classify_fog, axis=1)
+
+   plt.figure(figsize=(15, 5))
+
+   plt.subplot(1, 3, 1)
+   cloud_counts = data['CloudClassification'].value_counts()
+   cloud_counts.plot(kind='bar', color='skyblue')
+   plt.title('Cloud Classification')
+   plt.xlabel('Category')
+   plt.ylabel('Count')
+
+   plt.subplot(1, 3, 2)
+   temp_counts = data['TempClassification'].value_counts()
+   temp_counts.plot(kind='bar', color='lightgreen')
+   plt.title('Temperature Classification')
+   plt.xlabel('Category')
+   plt.ylabel('Count')
+
+   plt.subplot(1, 3, 3)
+   fog_counts = data['FogClassification'].value_counts()
+   fog_counts.plot(kind='bar', color='lightcoral')
+   plt.title('Fog Classification')
+   plt.xlabel('Category')
+   plt.ylabel('Count')
+       
+   plt.tight_layout()
+   plt.show()
+   ```
+   ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisCuacaBerdasarkanAwan,Suhu,danKabut.png?raw=true)
+   
+5. Pemisahan fitur dan target
+   ```python
+   features = data.drop('RainTomorrow', axis=1)
+   labels = data['RainTomorrow']
+   ```
+6. Pemisahan kolom numerik dan kategorikal
+   ```python
+   num_col = features.select_dtypes(exclude='object').columns
+   cat_col = features.select_dtypes(include='object').columns
+   ```
+7. Pembagian data training dan testing
+   ```python
+   from sklearn.model_selection import train_test_split
+   X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.30, random_state=42)
+   ```
+8. Prepocessing pipeline
+   - Membuat pipeline untuk fitur numerik dan kategorikal
+     ```python
+     num_pipeline = Pipeline(steps=[
+       ('impute', SimpleImputer(strategy='mean')),
+       ('scale', StandardScaler())
+       ])
+     
+     cat_pipeline = Pipeline(steps=[
+       ('impute', SimpleImputer(strategy='most_frequent')),
+       ('encoder', OrdinalEncoder())
+       ])
+     ```
+   - menggabungkan pipeline menggunakan ColumnTransformer
+   ```pyhton
+   col_transformer = ColumnTransformer(
+    transformers=[
+        ('num_pipeline', num_pipeline, num_col),
+        ('cat_pipeline', cat_pipeline, cat_col)
+    ],
+    remainder='passthrough',
+    n_jobs=-1
+   )
+   ```
+     
 # Proses Learning / Modeling
 
 1. Persiapan Data
