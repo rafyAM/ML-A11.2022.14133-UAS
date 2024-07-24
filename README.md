@@ -169,7 +169,67 @@ plt.show()
 ```
 ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisVariableCuaca.png?raw=true)
 
-6. 
+6. Analisis korelasi variable numerik
+```python
+numerical_data = data.select_dtypes(include=[np.number])
+
+correlation_matrix = numerical_data.corr()
+
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', square=True, cbar_kws={"shrink": .8})
+plt.title('Correlation Matrix')
+plt.show()
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/CorrelationMatrixNumericVariables.png)
+
+8. Analisis hubungan antara variabel numerik dan target:
+```python
+data['RainTomorrow'] = data['RainTomorrow'].map({'No': 0, 'Yes': 1})
+
+numerical_data = data.select_dtypes(include=[np.number])
+numerical_data = numerical_data.fillna(numerical_data.median())
+
+correlations = {}
+for col in numerical_data.columns:
+    if col != 'RainTomorrow':
+        correlation, _ = pointbiserialr(numerical_data[col], numerical_data['RainTomorrow'])
+        correlations[col] = correlation
+
+correlation_df = pd.DataFrame(list(correlations.items()), columns=['Variable', 'Point Biserial Correlation'])
+correlation_df = correlation_df.sort_values(by='Point Biserial Correlation', ascending=False)
+print(correlation_df)
+```
+```
+   Variable  Point Biserial Correlation
+9     Humidity3pm                    0.433167
+13       Cloud3pm                    0.290610
+8     Humidity9am                    0.251415
+12       Cloud9am                    0.244242
+2        Rainfall                    0.233877
+5   WindGustSpeed                    0.220144
+6    WindSpeed9am                    0.086746
+7    WindSpeed3pm                    0.084214
+0         MinTemp                    0.082249
+14        Temp9am                   -0.025488
+3     Evaporation                   -0.088709
+1         MaxTemp                   -0.156523
+15        Temp3pm                   -0.187721
+11    Pressure3pm                   -0.211952
+10    Pressure9am                   -0.230950
+4        Sunshine                   -0.319412
+```
+```python
+plt.figure(figsize=(15, 20))
+for i, col in enumerate(numerical_data.columns):
+    if col != 'RainTomorrow':
+        plt.subplot(5, 4, i + 1)
+        sns.boxplot(x=data['RainTomorrow'], y=numerical_data[col], palette='Set2')
+        plt.title(f'Boxplot of {col} vs RainTomorrow')
+plt.tight_layout()
+plt.show()
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/VisualisasiAntaraNumericdanTarget.png?raw=true)
+
 
 # Proses Features Dataset
 1. Penangan Missing Values dengan imputasi berdasarkan lokasi
