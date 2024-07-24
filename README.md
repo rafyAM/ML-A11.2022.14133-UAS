@@ -76,52 +76,101 @@ Fitur Kategorikal:
 
 # Exploratory Data Analysis (EDA)
 
-## Memuat data
+1. Memuat data
 ```python
 data = pd.read_csv("weatherAUS.csv")
 ```
-## Pemeriksaan awal
+2. Pemeriksaan awal
 ```python
 print(data.head())
 print(data.describe())
 ```
-## Mengatasi nilai yang hilang
+3. Analisis nilai null, unik dan visualisai presentase nilai null,dan distribusi nilai unik
+   - Analisis nilai null dan unik
 ```python
-data.fillna(data.median(), inplace=True)
-data.fillna(data.mode().iloc[0], inplace=True)
+nans = data.isna().sum().sort_values(ascending=False)
+pct = nans * 100 / data.shape[0]
+uniques = data.nunique()
+noted = pd.concat([nans, pct, uniques, data.dtypes], axis=1)
+noted.columns = ['Null count', 'Null percentage', 'n_unique values', 'data_type']
+noted
 ```
-## Menghapus duplikat
+```
+Null count	Null percentage	n_unique values	data_type
+Sunshine	69835	48.009762	145	float64
+Evaporation	62790	43.166506	358	float64
+Cloud3pm	59358	40.807095	10	float64
+Cloud9am	55888	38.421559	10	float64
+Pressure9am	15065	10.356799	546	float64
+Pressure3pm	15028	10.331363	549	float64
+WindDir9am	10566	7.263853	16	object
+WindGustDir	10326	7.098859	16	object
+WindGustSpeed	10263	7.055548	67	float64
+Humidity3pm	4507	3.098446	101	float64
+WindDir3pm	4228	2.906641	16	object
+Temp3pm	3609	2.481094	502	float64
+RainTomorrow	3267	2.245978	2	object
+Rainfall	3261	2.241853	681	float64
+RainToday	3261	2.241853	2	object
+WindSpeed3pm	3062	2.105046	44	float64
+Humidity9am	2654	1.824557	101	float64
+Temp9am	1767	1.214767	441	float64
+WindSpeed9am	1767	1.214767	43	float64
+MinTemp	1485	1.020899	389	float64
+MaxTemp	1261	0.866905	505	float64
+Location	0	0.000000	49	object
+Date	0	0.000000	3436	object
+```
+- Visualisasi presentase nilai null
 ```python
-data.drop_duplicates(inplace=True)
-```
-## Visualisasi distribusi dan hubungan
-```python
-plt.figure(figsize=(10, 6))
-sns.histplot(data['Rainfall'], kde=True)
-sns.pairplot(data[['MaxTemp', 'Rainfall', 'Humidity9am']])
-plt.figure(figsize=(10, 8))
-sns.heatmap(data.corr(), annot=True, cmap='coolwarm')
-```
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-## Encoding dan Skala
-```python
-numerical_features = data.select_dtypes(include=['int64', 'float64']).columns
-categorical_features = data.select_dtypes(include=['object']).columns
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', StandardScaler(), numerical_features),
-        ('cat', OneHotEncoder(), categorical_features)
-    ])
-data_processed = preprocessor.fit_transform(data)
+plt.figure(figsize=(10,6))
+sns.barplot(x=noted.index, y=noted['Null percentage'], color=(0.48, 0.13, 0.31))
+plt.xticks(rotation=45)
+plt.title('Persentase nilai null di setiap kolom', fontsize=16)
+plt.show()
 ```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/PresentasiNilaiNullDiSetiapKolom.png?raw=true)
 
-## Pembagian data
+- Visualisai distribusi nilai unik
 ```python
-X = data.drop('RainTomorrow', axis=1)
-y = data['RainTomorrow']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+plt.figure(figsize=(10,6))
+sns.barplot(x=noted.index,y=noted['n_unique values'],color=c)
+plt.xticks(rotation=45)
+plt.title('distibusi nilai unik di setiap kolom', fontsize=16)
+plt.show()
 ```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/DistribusiNilaiUnikDiSetiapKolom.png?raw=true)
+
+4. Analisis distribusi target variable RainTommorow
+```python
+co=data['RainTomorrow'].value_counts()/data['RainTomorrow'].count()
+sns.barplot(x=co.index,y=co.values,color=c)
+plt.title('Presentase hujan hari depan', fontsize=16)
+plt.plot()
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/PresentaseHujanhariDepan.png?raw=true)
+
+5. Visualisasi boxplot untuk deteksi outlier
+```python
+colors = sns.color_palette('husl', len(num_col))
+fig, ax = plt.subplots(5, 3, figsize=(20, 35))
+idx = 0
+for i in range(5):
+    for j in range(3):
+        if idx < len(num_col):
+            sns.boxplot(ax=ax[i, j], x=data[num_col[idx]], color=colors[idx])
+            ax[i, j].set_title(num_col[idx])
+            idx = idx + 1
+plt.tight_layout()
+plt.show()
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisVariableCuaca.png?raw=true)
+
+6. 
+
 # Proses Features Dataset
 1. Penangan Missing Values dengan imputasi berdasarkan lokasi
    - Membuat fungsi untuk imputasi berdasarkan lokasi
