@@ -230,6 +230,60 @@ plt.show()
 ```
 ![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/VisualisasiAntaraNumericdanTarget.png?raw=true)
 
+9. Analisis distribusi antara variable kategorikal
+```python
+categorical_columns = data.select_dtypes(include=['object']).columns
+
+plt.figure(figsize=(15, 20))
+for i, col in enumerate(categorical_columns):
+    plt.subplot(len(categorical_columns), 1, i + 1)
+    sns.countplot(x=data[col], palette='Set2')
+    plt.title(f'Distribution of {col}')
+    plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisDistribusiVariableKategorikal.png?raw=true)
+
+10.Analisis hubungan antara variable kategorikal dan target
+```python
+categorical_columns = data.select_dtypes(include=['object']).columns
+
+plt.figure(figsize=(15, 20))
+for i, col in enumerate(categorical_columns):
+    plt.subplot(len(categorical_columns), 1, i + 1)
+    sns.countplot(x=data[col], hue=data['RainTomorrow'], palette='Set2')
+    plt.title(f'Distribution of {col} vs RainTomorrow')
+    plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+```
+![feature importance](https://github.com/rafyAM/ML-A11.202214133-UAS/blob/main/images/AnalisisHubungAnantaraVariabelKategorikaldanTarget.png?raw=true)
+
+```python
+def chi_square_test(data, target, categorical_columns):
+    results = {}
+    for col in categorical_columns:
+        contingency_table = pd.crosstab(data[col], data[target])
+        chi2, p, dof, expected = chi2_contingency(contingency_table)
+        results[col] = {'chi2': chi2, 'p-value': p}
+    
+    return pd.DataFrame(results).T.sort_values(by='p-value')
+
+chi_square_results = chi_square_test(data, 'RainTomorrow', categorical_columns)
+print(chi_square_results)
+```
+
+```
+chi2        p-value
+Date         16786.372890   0.000000e+00
+Location      3544.790181   0.000000e+00
+WindGustDir   1519.901242   0.000000e+00
+WindDir9am    2214.846882   0.000000e+00
+RainToday    13799.479649   0.000000e+00
+WindDir3pm    1281.266704  5.645749e-264
+```
 
 # Proses Features Dataset
 1. Penangan Missing Values dengan imputasi berdasarkan lokasi
